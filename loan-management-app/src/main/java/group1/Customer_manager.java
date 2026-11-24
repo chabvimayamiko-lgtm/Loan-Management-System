@@ -2,6 +2,9 @@ package Customer
 ‎
 ‎import java.util.ArrayList;
 ‎import java.uti.Scanner;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 ‎
 ‎public class Customer_manager {
 ‎  
@@ -49,6 +52,42 @@ public void registerCustomer() {
     );
 
     customers.add(customer);
+
+
+
+
+public boolean saveCustomer(Customer customer) {
+
+    String sql = "INSERT INTO customers " +
+            "(customer_id, first_name, last_name, national_id, phone, email, address, employment_status, monthly_income) " +
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+    try (Connection connection = DatabaseConnection.getConnection();
+         PreparedStatement statement = connection.prepareStatement(sql)) {
+
+        statement.setInt(1, customer.getCustomerId());
+        statement.setString(2, customer.getFirstName());
+        statement.setString(3, customer.getLastName());
+        statement.setString(4, customer.getNationalId());
+        statement.setString(5, customer.getPhone());
+        statement.setString(6, customer.getEmail());
+        statement.setString(7, customer.getAddress());
+        statement.setString(8, customer.getEmploymentStatus());
+        statement.setDouble(9, customer.getMonthlyIncome());
+
+        int rowsInserted = statement.executeUpdate();
+
+        return rowsInserted > 0;
+
+    } catch (SQLException e) {
+
+        System.out.println("Customer registration failed!");
+        System.out.println(e.getMessage());
+
+        return false;
+    }
+}
+
 
 }
 
